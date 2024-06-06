@@ -1,0 +1,46 @@
+#ifndef IPV6PACKET_H
+#define IPV6PACKET_H
+
+#include "ipv4packet.h"
+#include <array>
+
+class IPv6Packet : public IPv4Packet {
+public:
+    static constexpr size_t IPV6_HEADER_SIZE = 40;
+    
+    struct IPv6Header {
+        uint32_t version_class_flow; // Version (4 bits) + Traffic class (8 bits) + Flow label (20 bits)
+        uint16_t payload_length;     // Payload length
+        uint8_t next_header;         // Next header
+        uint8_t hop_limit;           // Hop limit
+        std::array<uint8_t, 16> source_address; // Source address
+        std::array<uint8_t, 16> dest_address;   // Destination address
+    };
+    
+    IPv6Packet();
+    
+    void setTrafficClass(uint8_t traffic_class);
+    void setFlowLabel(uint32_t flow_label);
+    void setPayloadLength(uint16_t length);
+    void setNextHeader(uint8_t next_header);
+    void setHopLimit(uint8_t hop_limit);
+    void setSourceAddress(const std::array<uint8_t, 16>& address);
+    void setDestAddress(const std::array<uint8_t, 16>& address);
+    
+    uint8_t getTrafficClass() const;
+    uint32_t getFlowLabel() const;
+    uint16_t getPayloadLength() const;
+    uint8_t getNextHeader() const;
+    uint8_t getHopLimit() const;
+    std::array<uint8_t, 16> getSourceAddress() const;
+    std::array<uint8_t, 16> getDestAddress() const;
+    
+    std::vector<uint8_t> toBytes() const override;
+    void fromBytes(const std::vector<uint8_t>& bytes) override;
+    
+private:
+    IPv6Header ipv6_header;
+};
+
+#endif // IPV6PACKET_H
+

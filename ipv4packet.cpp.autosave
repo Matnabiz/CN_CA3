@@ -1,0 +1,42 @@
+#include "ipv4packet.h"
+#include <cstring>
+
+IPv4Packet::IPv4Packet() {
+    std::memset(&header, 0, sizeof(header));
+    header.version_ihl = (4 << 4) | (IPV4_HEADER_SIZE / 4); // IPv4 and header length
+}
+
+// Setters for header fields
+void IPv4Packet::setTypeOfService(uint8_t tos) { header.type_of_service = tos; }
+void IPv4Packet::setTotalLength(uint16_t len) { header.total_length = htons(len); }
+void IPv4Packet::setIdentification(uint16_t id) { header.identification = htons(id); }
+void IPv4Packet::setFlagsFragmentOffset(uint16_t flags_frag) { header.flags_fragment_offset = htons(flags_frag); }
+void IPv4Packet::setTimeToLive(uint8_t ttl) { header.time_to_live = ttl; }
+void IPv4Packet::setProtocol(uint8_t proto) { header.protocol = proto; }
+void IPv4Packet::setHeaderChecksum(uint16_t checksum) { header.header_checksum = htons(checksum); }
+void IPv4Packet::setSourceAddress(uint32_t addr) { header.source_address = htonl(addr); }
+void IPv4Packet::setDestAddress(uint32_t addr) { header.dest_address = htonl(addr); }
+
+// Getters for header fields
+uint8_t IPv4Packet::getTypeOfService() const { return header.type_of_service; }
+uint16_t IPv4Packet::getTotalLength() const { return ntohs(header.total_length); }
+uint16_t IPv4Packet::getIdentification() const { return ntohs(header.identification); }
+uint16_t IPv4Packet::getFlagsFragmentOffset() const { return ntohs(header.flags_fragment_offset); }
+uint8_t IPv4Packet::getTimeToLive() const { return header.time_to_live; }
+uint8_t IPv4Packet::getProtocol() const { return header.protocol; }
+uint16_t IPv4Packet::getHeaderChecksum() const { return ntohs(header.header_checksum); }
+uint32_t IPv4Packet::getSourceAddress() const { return ntohl(header.source_address); }
+uint32_t IPv4Packet::getDestAddress() const { return ntohl(header.dest_address); }
+
+// Utility functions
+std::vector<uint8_t> IPv4Packet::toBytes() const {
+    std::vector<uint8_t> bytes(sizeof(header));
+    std::memcpy(bytes.data(), &header, sizeof(header));
+    return bytes;
+}
+
+void IPv4Packet::fromBytes(const std::vector<uint8_t>& bytes) {
+    if (bytes.size() >= sizeof(header)) {
+        std::memcpy(&header, bytes.data(), sizeof(header));
+    }
+}

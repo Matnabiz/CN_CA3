@@ -1,0 +1,64 @@
+#ifndef IPV4PACKET_H
+#define IPV4PACKET_H
+
+#include <cstdint>
+#include <vector>
+#ifdef _WIN32
+#include <winsock2.h>
+#pragma comment(lib, "ws2_32.lib")
+#else
+#include <arpa/inet.h>
+#endif
+
+class IPv4Packet {
+public:
+    // Constants for IPv4 header
+    static constexpr size_t IPV4_HEADER_SIZE = 20;
+    
+    // IPv4 header structure
+    struct IPv4Header {
+        uint8_t version_ihl;       // Version (4 bits) + Internet header length (4 bits)
+        uint8_t type_of_service;   // Type of service
+        uint16_t total_length;     // Total length
+        uint16_t identification;   // Identification
+        uint16_t flags_fragment_offset; // Flags (3 bits) + Fragment offset (13 bits)
+        uint8_t time_to_live;      // Time to live
+        uint8_t protocol;          // Protocol
+        uint16_t header_checksum;  // Header checksum
+        uint32_t source_address;   // Source address
+        uint32_t dest_address;     // Destination address
+    };
+    
+    IPv4Packet();
+    
+    // Setters for header fields
+    void setTypeOfService(uint8_t tos);
+    void setTotalLength(uint16_t len);
+    void setIdentification(uint16_t id);
+    void setFlagsFragmentOffset(uint16_t flags_frag);
+    void setTimeToLive(uint8_t ttl);
+    void setProtocol(uint8_t proto);
+    void setHeaderChecksum(uint16_t checksum);
+    void setSourceAddress(uint32_t addr);
+    void setDestAddress(uint32_t addr);
+    
+    // Getters for header fields
+    uint8_t getTypeOfService() const;
+    uint16_t getTotalLength() const;
+    uint16_t getIdentification() const;
+    uint16_t getFlagsFragmentOffset() const;
+    uint8_t getTimeToLive() const;
+    uint8_t getProtocol() const;
+    uint16_t getHeaderChecksum() const;
+    uint32_t getSourceAddress() const;
+    uint32_t getDestAddress() const;
+    
+    // Utility functions
+    std::vector<uint8_t> toBytes() const;
+    void fromBytes(const std::vector<uint8_t>& bytes);
+    
+private:
+    IPv4Header header;
+};
+
+#endif // IPV4PACKET_H
